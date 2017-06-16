@@ -17,7 +17,7 @@ do
                 echo "Usage: ded [-h] [-l] [-r] [-d] jar"
                 echo "       -l : list all jars in local repositoy" 
                 echo "       -r : list all jars in remote repository"
-                echo "       -d : download jar from remote, and format likes group:artfact:version:classifer:extension"
+                echo "       -d : download jar from remote, and format likes group:artfact:version:classifer:extension into maven's local repository"
                 echo "       -h : manpage"
                 echo "       jar format is group:artifact:version[:classifer:extension]"
                 exit 0
@@ -58,13 +58,11 @@ list_local() #列举本地所有的jar包
 
 list_remote() #列举远程所有的jar包
 {
-    echo "---------------------------List all result in $REMOTE_REPO:-------------------------"
     python $PROGDIR/py/remote_dependency.py $REMOTE_REPO $DOWNLOAD_JAR
 }
 
-download_remote() #列举本地所有的jar包
+download_remote() #下载需要的jar包到本地maven库
 {
-    echo "---------------------------download specific file in $REMOTE_REPO:-------------------------"
     python $PROGDIR/py/download_dependency.py $REMOTE_REPO $DOWNLOAD_JAR
 }
 
