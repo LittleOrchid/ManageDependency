@@ -83,9 +83,10 @@ def check_version(build_method):
         candidate_version = result_versions[i]
         jar_path = os.path.join(artifact_dir_path, candidate_version)
         if build_method.upper() == 'GRADLE':
-            if not os.path.isdir(jar_path):
-                continue
-            candidate_file_signs = os.listdir(jar_path)
+            if os.path.isdir(jar_path):
+                candidate_file_signs = os.listdir(jar_path)
+            else:
+                candidate_file_signs = []
         else:
             candidate_file_signs = ['']
         valid_file = False
