@@ -24,7 +24,7 @@ def parse_all_versions():
         if not version_a.attrs:
             continue
         for attr in version_a.attrs:
-            if attr and len(attr) >= 2 and attr[0] == 'href' and attr[1].encode('utf-8').startswith(':') and attr[1].endswith('/'):
+            if attr and len(attr) >= 2 and attr[0] == 'href' and attr[1].endswith('/'):
                 version_list.append(attr[1].encode('utf-8').replace(':', ''))
     if version_list:
         print coordinates[0]
@@ -48,8 +48,7 @@ def parse_specific_version():
         for attr in file_a.attrs:
             if attr and len(attr) >= 2 and attr[0] == 'href':
                 gav_files.append(attr[1].encode('utf-8').replace(':', ''))
-                if attr[1].encode('utf-8').startswith(':') \
-                        and attr[1].encode('utf-8').endswith(classifier_name+'.' + extension_name):
+                if attr[1].encode('utf-8').endswith(classifier_name+'.' + extension_name):
                     find_extension = True
     if find_extension:
         print coordinates[0], ':'
