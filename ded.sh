@@ -4,8 +4,6 @@ PROGDIR=`dirname $0`
 PROGDIR=`cd $PROGDIR && pwd -P`
 
 HOME_DIR=`cd ~ && pwd -P`
-MAVEN_REPOSITORY="$M2_REPO"
-GRADLE_REPOSITORY="$GRADLE_REPO"
 REMOTE_REPO="jcenter"
 #0:No handle; 
 #1: list all versions of the jar in local repository; 
@@ -55,35 +53,7 @@ fi
 
 list_local() #列举本地所有的jar包
 {
-    echo ""
-    # 从本地maven库判断
-    if [ -z "$MAVEN_REPOSITORY" ]; then
-        echo "==> Cannot find the environment parameter 'M2_REPO'，so use the default value"
-        echo "    \$M2_REPO=$HOME_DIR/.m2/repository"
-        MAVEN_REPOSITORY="$HOME_DIR/.m2/repository"
-    fi
-    if [ ! -d "$MAVEN_REPOSITORY" ]; then
-        echo "--> The local repository directory is not exit"
-        echo "    we now create the directory with the path $MAVEN_REPOSITORY"
-        mkdir -p $MAVEN_REPOSITORY
-    fi
-    echo "--> List all result in $MAVEN_REPOSITORY:"
-    python $PROGDIR/py/local_dependency.py $MAVEN_REPOSITORY $DOWNLOAD_JAR maven
-
-    echo ""
-    # 从本地gradle库判断
-    if [ -z "$GRADLE_REPOSITORY" ]; then
-        echo "==> Cannot find the environment parameter 'GRADLE_REPO'，so use the default value"
-        echo "    \$GRADLE_REPO=$HOME_DIR/.gradle/caches/modules-2/files-2.1"
-        GRADLE_REPOSITORY="$HOME_DIR/.gradle/caches/modules-2/files-2.1"
-    fi
-    if [ ! -d "$GRADLE_REPOSITORY" ]; then
-        echo "--> The local repository directory is not exit"
-        echo "    we now create the directory with the path $GRADLE_REPOSITORY"
-        mkdir -p $GRADLE_REPOSITORY
-    fi
-    echo "--> List all result in $GRADLE_REPOSITORY:"
-    python $PROGDIR/py/local_dependency.py $GRADLE_REPOSITORY $DOWNLOAD_JAR gradle
+    python $PROGDIR/py/route.py $PROGDIR local $DOWNLOAD_JAR
 }
 
 list_remote() #列举远程所有的jar包

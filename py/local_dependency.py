@@ -1,5 +1,4 @@
 # coding=utf8
-import sys
 import os.path
 
 coordinates = []
@@ -113,21 +112,22 @@ def check_version(build_method):
         return None
 
 
-# 程序开始, 默认是maven库
-repo_base = sys.argv[1]
-method = sys.argv[3]
-if not method:
-    method = "maven"
-parse_jar_coordinate(sys.argv[2], method)
-chk_ga_result = check_group_artifact()
-chk_v_result = None
-if chk_ga_result:
-    chk_v_result = check_version(method)
+def list_local_jars(repo_base_parm, jar_coordinate, method):
+    global repo_base
+    repo_base = repo_base_parm
+    # 程序开始, 默认是maven库
+    if not method:
+        method = "maven"
+    parse_jar_coordinate(jar_coordinate, method)
+    chk_ga_result = check_group_artifact()
+    chk_v_result = None
+    if chk_ga_result:
+        chk_v_result = check_version(method)
 
-if not chk_ga_result or not chk_v_result:
-    print '!!!Filed to find specific jars in ', repo_base, '!!!'
-else:
-    print '    ', coordinates[0] + ': '
-    print '    ', '    ', coordinates[1] + ': '
-    for version in chk_v_result:
-        print '    ', '    ', '    ', version
+    if not chk_ga_result or not chk_v_result:
+        print '    Cannot find ' + jar_coordinate + 'in local repository'
+    else:
+        print '    ', coordinates[0] + ': '
+        print '    ', '    ', coordinates[1] + ': '
+        for version in chk_v_result:
+            print '    ', '    ', '    ', version

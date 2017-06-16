@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<repo>
+    <local>
+        <maven>/Users/RexNJC/.m2/repository</maven>
+        <gradle>/Users/RexNJC/.gradle/caches/modules-2/files-2.1</gradle>
+    </local>
+
+    <remote>
+        <maven-remote method="maven">
+
+        </maven-remote>
+
+        <gradle-remote method="gradle">
+
+        </gradle-remote>
+    </remote>
+</repo>
