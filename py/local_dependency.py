@@ -1,3 +1,4 @@
+# coding=utf8
 import sys
 import os.path
 
@@ -7,94 +8,146 @@ artifact_dir = ''
 version_dir = '*'
 classifier_name = ''
 extension_name = 'jar'
-
 repo_base = ''
-
-def parse_jar_group_artifact(group_artifact_path):
-    version_bundle = os.listdir(group_artifact_path)
-    if not version_bundle:
-        return
-
-    result_version_dirs = []
-    for candidate_version_dir in version_bundle:
-        tmp_version_dir = os.path.join(group_artifact_path, candidate_version_dir)
-        if os.path.isfile(tmp_version_dir):
-            continue
-        for tmp_file in os.listdir(tmp_version_dir):
-            suffix_of_jar = '.' + extension_name
-            if classifier_name:
-                suffix_of_jar = '-' + classifier_name + '.' + extension_name
-            if tmp_file.endswith(suffix_of_jar):
-                result_version_dirs.append(candidate_version_dir)
-                break
-
-    if len(result_version_dirs) == 0:
-        return
-    elif version_dir == '*':
-        return result_version_dirs
-    elif version_dir in result_version_dirs:
-        result_version_dirs = []
-        result_version_dirs.append(version_dir)
-        return result_version_dirs
-    else:
-        return
+support_extensions = ['so', 'jar']
 
 
-def parse_jar_coordinate(jar_name):
+def check_valid_with_pre_suffix(dir_path, file_prefix, file_suffix):
+    if not os.path.isdir(dir_path):
+        return False
+    candidate_files = os.listdir(dir_path)
+    if not candidate_files:
+        return False
+    for candidate_file in candidate_files:
+        candidate_file = os.path.join(dir_path, candidate_file)
+        if candidate_file.startswith(file_prefix) and candidate_file.endswith(file_suffix):
+            return True
+    return False
+
+
+def parse_jar_coordinate(jar_name, method):
     global coordinates
     global group_path
     global artifact_dir
     global version_dir
     global classifier_name
     global extension_name
-
-    repo_base = '/Users/RexNJC/.m2/repository/'
+    global repo_base
 
     coordinates = jar_name.split(':')
     coordinates_len = len(coordinates)
     if 0 < coordinates_len:
         group_name = coordinates[0]
-        group_path = group_name.replace('.', '/')
-
+        group_path = group_name
+        if method.upper() == "MAVEN":
+            group_path = group_name.replace('.', '/')
     if 1 < coordinates_len:
         artifact_dir = coordinates[1]
-
     if 2 < coordinates_len:
         version_dir = coordinates[2]
-
     if 3 < coordinates_len:
         classifier_name = coordinates[3]
-
     if 4 < coordinates_len:
         extension_name = coordinates[4]
 
+
+def check_group_artifact():
     if not group_path or not artifact_dir:
-        return
-
+        return False
     group_dir_path = os.path.join(repo_base, group_path)
-    candidate_artifacts = os.listdir(group_dir_path)
-    if not candidate_artifacts:
-        return
-
-    result_artifact_version_dirs = {}
-    for candidate_artifact in candidate_artifacts:
-        if candidate_artifact.startswith(artifact_dir):
-            group_artifact_path = os.path.join(repo_base, group_path, candidate_artifact)
-            result_version_dirs = parse_jar_group_artifact(group_artifact_path)
-            if result_version_dirs:
-                result_artifact_version_dirs.setdefault(candidate_artifact, result_version_dirs)
-
-    return result_artifact_version_dirs
+    if not os.path.exists(group_dir_path):
+        return False
+    artifact_dir_path = os.path.join(group_dir_path, artifact_dir)
+    if not os.path.exists(artifact_dir_path):
+        return False
+    return True
 
 
+def check_version(build_method):
+    group_dir_path = os.path.join(repo_base, group_path)
+    artifact_dir_path = os.path.join(group_dir_path, artifact_dir)
+    candidate_version_dirs = os.listdir(artifact_dir_path)
+    if not len(candidate_version_dirs):
+        return None
+    result_versions = []
+    for candidate_version in candidate_version_dirs:
+        if version_dir == '*':
+            result_versions.append(candidate_version)
+        elif candidate_version == version_dir:
+            result_versions.append(candidate_version)
+            break
+    if len(result_versions) == 0:
+        return None
+    if build_method.upper() == 'MAVEN':
+        for i in range(len(result_versions)-1, -1, -1):
+            candidate_version = result_versions[i]
+            jar_path = os.path.join(artifact_dir_path, candidate_version)
+            dir_path = jar_path
+            jar_path = os.path.join(jar_path, artifact_dir)
+            jar_path += '-' + candidate_version
+            if len(coordinates) < 5:
+                valid_file = False
+                for file_suffix in support_extensions:
+                    if check_valid_with_pre_suffix(dir_path, jar_path, file_suffix):
+                        valid_file = True
+                        break
+                if not valid_file:
+                    result_versions.remove(candidate_version)
+            else:
+                jar_path += '-' + coordinates[3] + '.' + coordinates[4]
+                if not os.path.exists(jar_path):
+                    result_versions.remove(candidate_version)
+        if len(result_versions) > 0:
+            return result_versions
+        else:
+            return None
+    elif build_method.upper() == 'GRADLE':
+        for i in range(len(result_versions)-1, -1, -1):
+            candidate_version = result_versions[i]
+            jar_path = os.path.join(artifact_dir_path, candidate_version)
+            if not os.path.isdir(jar_path):
+                continue
+            candidate_file_signs = os.listdir(jar_path)
+            for candidate_file_sign in candidate_file_signs:
+                jar_path = os.path.join(jar_path, candidate_file_sign)
+                dir_path = jar_path
+                jar_path = os.path.join(jar_path, artifact_dir)
+                jar_path += '-' + candidate_version
+                if len(coordinates) < 5:
+                    valid_file = False
+                    for file_suffix in support_extensions:
+                        if check_valid_with_pre_suffix(dir_path, jar_path, file_suffix):
+                            valid_file = True
+                            break
+                    if not valid_file:
+                        result_versions.remove(candidate_version)
+                else:
+                    jar_path += '-' + coordinates[3] + '.' + coordinates[4]
+                    if not os.path.exists(jar_path):
+                        result_versions.remove(candidate_version)
+        if len(result_versions) > 0:
+            return result_versions
+        else:
+            return None
+        return None
+    else:
+        return None
+
+# 程序开始, 默认是maven库
 repo_base = sys.argv[1]
-result_versions = parse_jar_coordinate(sys.argv[2])
-if not result_versions:
+method = sys.argv[3]
+if not method:
+    method = "maven"
+parse_jar_coordinate(sys.argv[2], method)
+chk_ga_result = check_group_artifact()
+chk_v_result = None
+if chk_ga_result:
+    chk_v_result = check_version(method)
+
+if not chk_ga_result or not chk_v_result:
     print '!!!Filed to find specific jars in ', repo_base, '!!!'
 else:
-    print coordinates[0] + ' : '
-    for artifact in result_versions.keys():
-        print '\t', artifact, ' : '
-        versions = result_versions.get(artifact)
-        for version in versions:
-            print '\t', '\t', version
+    print '    ', coordinates[0] + ': '
+    print '    ', '    ', coordinates[1] + ': '
+    for version in chk_v_result:
+        print '    ', '    ', '    ', version
