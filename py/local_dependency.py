@@ -78,60 +78,39 @@ def check_version(build_method):
             break
     if len(result_versions) == 0:
         return None
-    if build_method.upper() == 'MAVEN':
-        for i in range(len(result_versions)-1, -1, -1):
-            candidate_version = result_versions[i]
-            jar_path = os.path.join(artifact_dir_path, candidate_version)
-            dir_path = jar_path
-            jar_path = os.path.join(jar_path, artifact_dir)
-            jar_path += '-' + candidate_version
-            if len(coordinates) < 5:
-                valid_file = False
-                for file_suffix in support_extensions:
-                    if check_valid_with_pre_suffix(dir_path, jar_path, file_suffix):
-                        valid_file = True
-                        break
-                if not valid_file:
-                    result_versions.remove(candidate_version)
-            else:
-                jar_path += '-' + coordinates[3] + '.' + coordinates[4]
-                if not os.path.exists(jar_path):
-                    result_versions.remove(candidate_version)
-        if len(result_versions) > 0:
-            return result_versions
-        else:
-            return None
-    elif build_method.upper() == 'GRADLE':
-        for i in range(len(result_versions)-1, -1, -1):
-            candidate_version = result_versions[i]
-            jar_path = os.path.join(artifact_dir_path, candidate_version)
+
+    for i in range(len(result_versions)-1, -1, -1):
+        candidate_version = result_versions[i]
+        jar_path = os.path.join(artifact_dir_path, candidate_version)
+        if build_method.upper() == 'GRADLE':
             if not os.path.isdir(jar_path):
                 continue
             candidate_file_signs = os.listdir(jar_path)
-            for candidate_file_sign in candidate_file_signs:
-                jar_path = os.path.join(jar_path, candidate_file_sign)
-                dir_path = jar_path
-                jar_path = os.path.join(jar_path, artifact_dir)
-                jar_path += '-' + candidate_version
-                if len(coordinates) < 5:
-                    valid_file = False
-                    for file_suffix in support_extensions:
-                        if check_valid_with_pre_suffix(dir_path, jar_path, file_suffix):
-                            valid_file = True
-                            break
-                    if not valid_file:
-                        result_versions.remove(candidate_version)
-                else:
-                    jar_path += '-' + coordinates[3] + '.' + coordinates[4]
-                    if not os.path.exists(jar_path):
-                        result_versions.remove(candidate_version)
-        if len(result_versions) > 0:
-            return result_versions
         else:
-            return None
-        return None
+            candidate_file_signs = ['']
+        valid_file = False
+        for candidate_file_sign in candidate_file_signs:
+            c_jar_path = os.path.join(jar_path, candidate_file_sign)
+            dir_path = c_jar_path
+            c_jar_path = os.path.join(c_jar_path, artifact_dir)
+            c_jar_path += '-' + candidate_version
+            if len(coordinates) < 5:
+                for file_suffix in support_extensions:
+                    if valid_file:
+                        continue
+                    if check_valid_with_pre_suffix(dir_path, c_jar_path, file_suffix):
+                        valid_file = True
+            else:
+                c_jar_path += '-' + coordinates[3] + '.' + coordinates[4]
+                if os.path.exists(c_jar_path):
+                    valid_file = True
+        if not valid_file:
+            result_versions.remove(candidate_version)
+    if len(result_versions) > 0:
+        return result_versions
     else:
         return None
+
 
 # 程序开始, 默认是maven库
 repo_base = sys.argv[1]
