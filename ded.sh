@@ -4,7 +4,6 @@ PROGDIR=`dirname $0`
 PROGDIR=`cd $PROGDIR && pwd -P`
 
 HOME_DIR=`cd ~ && pwd -P`
-REMOTE_REPO="jcenter"
 #0:No handle; 
 #1: list all versions of the jar in local repository; 
 #2: list all versoions of the jar in remote repository;
@@ -17,7 +16,6 @@ do
                 echo "Usage: ded [-h] [-l] [-r] [-d] jar"
                 echo "       -l : list all jars in local repositoy" 
                 echo "       -r : list all jars in remote repository"
-                echo "       -d : download jar from remote, and format likes group:artfact:version:classifer:extension into maven's local repository"
                 echo "       -h : manpage"
                 echo "       jar format is group:artifact:version[:classifer:extension]"
                 exit 0
@@ -27,9 +25,6 @@ do
                 ;;
             r)
                 CONTROL_TYPE=2
-                ;;
-            d) 
-                CONTROL_TYPE=3
                 ;;
             ?)  #当有不认识的选项的时候arg为?
                 echo "Invalid arguments"
@@ -58,12 +53,7 @@ list_local() #列举本地所有的jar包
 
 list_remote() #列举远程所有的jar包
 {
-    python $PROGDIR/py/remote_dependency.py $REMOTE_REPO $DOWNLOAD_JAR
-}
-
-download_remote() #下载需要的jar包到本地maven库
-{
-    python $PROGDIR/py/download_dependency.py $REMOTE_REPO $DOWNLOAD_JAR
+    python $PROGDIR/py/route.py $PROGDIR remote $DOWNLOAD_JAR
 }
 
 case "$CONTROL_TYPE" in
@@ -76,9 +66,6 @@ case "$CONTROL_TYPE" in
         ;;
     2)
         list_remote
-        ;;
-    3) 
-        download_remote 
         ;;
 esac
 

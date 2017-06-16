@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
-import os.path
 import commands
 from BeautifulSoup import BeautifulSoup
 
@@ -13,14 +11,15 @@ classifier_name = ''
 extension_name = 'jar'
 repo_base_url = ''
 
-def parse_all_versions_jcenter():
+
+def parse_all_versions():
     curl_url = 'curl ' + repo_base_url + group_path + '/' + artifact_dir + '/'
     status, result = commands.getstatusoutput(curl_url)
     soup = BeautifulSoup(result)
     version_href_array = soup.findAll('a')
     if not version_href_array:
         return
-    version_list=[]
+    version_list = []
     for version_a in version_href_array:
         if not version_a.attrs:
             continue
@@ -32,7 +31,6 @@ def parse_all_versions_jcenter():
         print '\t', coordinates[1]
         for version in version_list:
             print '\t\t', version.replace('/', '')
-
 
 
 def parse_specific_version():
@@ -89,15 +87,19 @@ def parse_jar_coordinate_jcenter(jar_name):
         extension_name = coordinates[4]
 
     if not group_path or not artifact_dir:
-        return
+        return False
+    return True
 
+
+def get_mavenCenter_versions(repo_url, jar_name):
+    global repo_base_url
+    repo_base_url = repo_url
+    if not repo_base_url.endswith('/'):
+        repo_base_url += '/';
+    if not parse_jar_coordinate_jcenter(jar_name):
+        return None
     if version_dir == '*':
-        parse_all_versions_jcenter()
+        parse_all_versions()
     else:
         parse_specific_version()
-
-repo_base = sys.argv[1]
-repo_base_url = "http://jcenter.bintray.com/"
-parse_jar_coordinate_jcenter(sys.argv[2])
-
 

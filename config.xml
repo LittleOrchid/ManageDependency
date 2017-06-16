@@ -6,12 +6,7 @@
     </local>
 
     <remote>
-        <maven-remote method="maven">
-
-        </maven-remote>
-
-        <gradle-remote method="gradle">
-
-        </gradle-remote>
+        <url repo="jcenter">http://jcenter.bintray.com</url>
+        <url repo="mavenCenter">https://repo.maven.apache.org/maven2/</url>
     </remote>
 </repo>
