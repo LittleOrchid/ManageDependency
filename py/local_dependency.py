@@ -25,7 +25,7 @@ def check_valid_with_pre_suffix(dir_path, file_prefix, file_suffix):
     return False
 
 
-def parse_jar_coordinate(jar_name, method):
+def parse_jar_coordinate(jar_name, build_method):
     global coordinates
     global group_path
     global artifact_dir
@@ -39,7 +39,7 @@ def parse_jar_coordinate(jar_name, method):
     if 0 < coordinates_len:
         group_name = coordinates[0]
         group_path = group_name
-        if method.upper() == "MAVEN":
+        if build_method.upper() == "MAVEN":
             group_path = group_name.replace('.', '/')
     if 1 < coordinates_len:
         artifact_dir = coordinates[1]
