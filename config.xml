@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <repo>
     <local>
-        <maven>/Users/RexNJC/.m2/repository</maven>
-        <gradle>/Users/RexNJC/.gradle/caches/modules-2/files-2.1</gradle>
+        <url repo="maven">/Users/RexNJC/.m2/repository</url>
+        <url repo="gradle">/Users/RexNJC/.gradle/caches/modules-2/files-2.1</url>
     </local>
 
     <remote>

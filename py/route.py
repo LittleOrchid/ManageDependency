@@ -23,28 +23,21 @@ def parse_repo_config(pro_path_param):
         exit(1)
     # parse local configs
     local_repos = root.getElementsByTagName("local")
-    if not local_repos:
-        print "---> You should config the local repo path"
-        exit(1)
-    if len(local_repos) > 1:
-        print "---> Only support for a single local repo tag"
-        exit(1)
-    local_repo = local_repos[0]
-    local_sub_repos = local_repo.childNodes
-    if not local_sub_repos or len(local_sub_repos) <= 0:
-        print "---> Not found a local maven repo or a gradle repo"
-        exit(1)
-    for local_sub_repo in local_sub_repos:
-        if local_sub_repo.nodeName == 'maven' or local_sub_repo.nodeName == 'gradle':
-            if not local_sub_repo.childNodes \
-                    or len(local_sub_repo.childNodes) <= 0:
-                print "You should set the value in the tag 'maven'"
-                exit(1)
-            else:
-                if local_sub_repo.nodeName == 'maven':
-                    local_maven_repo_func.append(local_sub_repo.firstChild.data)
-                elif local_sub_repo.nodeName == 'gradle':
-                    local_gradle_repo_func.append(local_sub_repo.firstChild.data)
+    if local_repos and len(local_repos) == 1:
+        local_repo = local_repos[0]
+        local_sub_repos = local_repo.childNodes
+        if local_sub_repos and len(local_sub_repos) > 0:
+            for local_sub_repo in local_sub_repos:
+                if local_sub_repo.nodeName == 'url':
+                    if not local_sub_repo.childNodes \
+                            or len(local_sub_repo.childNodes) <= 0:
+                        print "You should set the value in the tag 'url'"
+                        exit(1)
+                    else:
+                        if local_sub_repo.getAttribute('repo') == 'gradle':
+                            local_gradle_repo_func.append(local_sub_repo.firstChild.data)
+                        elif local_sub_repo.getAttribute('repo') == 'maven':
+                            local_maven_repo_func.append(local_sub_repo.firstChild.data)
     # parse remote configs
     remote_repos = root.getElementsByTagName("remote")
     if remote_repos and len(remote_repos) == 1:

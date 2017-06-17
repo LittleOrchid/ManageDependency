@@ -15,7 +15,26 @@ Usage: ded [-h] [-l] [-r] jar
        jar format is group:artifact:version[:classifer:extension]
 ~~~
 
-## exampleb
+## config
+
+~~~ xml
+    <?xml version="1.0"?>
+    <repo>
+        <local>
+            <url repo="maven">/Users/RexNJC/.m2/repository</url>
+            <url repo="gradle">/Users/RexNJC/.gradle/caches/modules-2/files-2.1</url>
+        </local>
+
+        <remote>
+            <url repo="jcenter">http://jcenter.bintray.com</url>
+            <url repo="maven">https://repo.maven.apache.org/maven2/</url>
+            <url repo="maven">http://mvn.test.alipay.net/artifactory/content/groups/alipay-mobile/</url>
+        </remote>
+    </repo>
+~~~
+> The url must be the place of the repository you want to search in
+
+## example
 ### 1.List the archive be dependent on in local repository (~/.m2/repository) 
 **cmd:** `ded -l com.squareup.okio:okio`
 
