@@ -4,14 +4,13 @@ import os.path
 from xml.dom import minidom
 from local_dependency import list_local_jars
 from remote_jcenter_dependency import get_jcenter_versions
-from remote_maven_center_dependency import get_mavenCenter_versions
+from remote_maven_dependency import get_maven_versions
 
 
 # 爬取配置信息
 def parse_repo_config(pro_path_param):
     local_maven_repo_func = []
     local_gradle_repo_func = []
-    remote_maven_center_url_func = []
     remote_jcenter_url_func = []
     remote_maven_url_func = []
     if not os.path.exists(pro_path_param + '/config.xml'):
@@ -61,14 +60,11 @@ def parse_repo_config(pro_path_param):
                     else:
                         if remote_sub_repo.getAttribute('repo') == 'jcenter':
                             remote_jcenter_url_func.append(remote_sub_repo.firstChild.data)
-                        elif remote_sub_repo.getAttribute('repo') == 'mavenCenter':
-                            remote_maven_center_url_func.append(remote_sub_repo.firstChild.data)
                         elif remote_sub_repo.getAttribute('repo') == 'maven':
                             remote_maven_url_func.append(remote_sub_repo.firstChild.data)
     return local_maven_repo_func, \
            local_gradle_repo_func, \
            remote_jcenter_url_func, \
-           remote_maven_center_url_func, \
            remote_maven_url_func
 
 
@@ -86,16 +82,16 @@ def show_local_jars(local_maven_repo_func, local_gradle_repo_func, jar_name):
         list_local_jars(gradle_repo_func, jar_name, "gradle")
 
 
-def show_remote_jars(jcenter_repo_urls, mavenCenter_repo_urls, maven_repo_urls, jar_name_param):
+def show_remote_jars(jcenter_repo_urls, maven_repo_urls, jar_name_param):
     print "\n===> All Results In Remote Repositories Are Listed Below"
     if jcenter_repo_urls:
         for jcenter_url in jcenter_repo_urls:
             print "--> List all result in " + jcenter_url
             get_jcenter_versions(jcenter_url, jar_name_param)
-    if mavenCenter_repo_urls:
-        for mavenCenter_url in mavenCenter_repo_urls:
-            print "--> List all result in " + mavenCenter_url
-            get_mavenCenter_versions(mavenCenter_url, jar_name_param)
+    if maven_repo_urls:
+        for maven_url in maven_repo_urls:
+            print "--> List all result in " + maven_url
+            get_maven_versions(maven_url, jar_name_param)
 
 
 if __name__ == "__main__":
@@ -105,9 +101,9 @@ if __name__ == "__main__":
     pro_path = sys.argv[1]
     action = sys.argv[2]
     jar_name = sys.argv[3]
-    local_maven_repo, local_gradle_repo, remote_jcenter_repo, remote_mavenCenter_repo, remote_maven_repo \
+    local_maven_repo, local_gradle_repo, remote_jcenter_repo, remote_maven_repo \
         = parse_repo_config(pro_path)
     if action == 'local':
         show_local_jars(local_maven_repo, local_gradle_repo, jar_name)
     elif action == 'remote':
-        show_remote_jars(remote_jcenter_repo, remote_mavenCenter_repo, remote_maven_repo, jar_name)
+        show_remote_jars(remote_jcenter_repo, remote_maven_repo, jar_name)

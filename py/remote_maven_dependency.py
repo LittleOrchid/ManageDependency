@@ -10,6 +10,7 @@ version_dir = '*'
 classifier_name = ''
 extension_name = 'jar'
 repo_base_url = ''
+support_extensions = ['so', 'jar']
 
 
 def parse_all_versions():
@@ -25,7 +26,7 @@ def parse_all_versions():
             continue
         for attr in version_a.attrs:
             if attr and len(attr) >= 2 and attr[0] == 'href' and attr[1].endswith('/'):
-                version_list.append(attr[1].encode('utf-8').replace(':', ''))
+                version_list.append(attr[1].split('/')[-2])
     if version_list:
         print coordinates[0]
         print '\t', coordinates[1]
@@ -47,9 +48,15 @@ def parse_specific_version():
             continue
         for attr in file_a.attrs:
             if attr and len(attr) >= 2 and attr[0] == 'href':
-                gav_files.append(attr[1].encode('utf-8').replace(':', ''))
-                if attr[1].encode('utf-8').endswith(classifier_name+'.' + extension_name):
-                    find_extension = True
+                gav_files.append(attr[1].split('/')[-1])
+                if extension_name:
+                    if attr[1].endswith(classifier_name+'.' + extension_name):
+                        find_extension = True
+                else:
+                    for support_extension in support_extensions:
+                        if attr[1].endswith(classifier_name+'.' + support_extension):
+                            find_extension = True
+                            break
     if find_extension:
         print coordinates[0], ':'
         print '\t', coordinates[1], ':'
@@ -90,7 +97,7 @@ def parse_jar_coordinate_jcenter(jar_name):
     return True
 
 
-def get_mavenCenter_versions(repo_url, jar_name):
+def get_maven_versions(repo_url, jar_name):
     global repo_base_url
     repo_base_url = repo_url
     if not repo_base_url.endswith('/'):

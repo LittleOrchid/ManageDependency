@@ -8,10 +8,9 @@ You can use this script to list the local dependencies, list the remote dependen
 
 ## usage
 ~~~
-Usage: ded [-h] [-l] [-r] [-d] jar
+Usage: ded [-h] [-l] [-r] jar
        -l : list all jars in local repositoy
        -r : list all jars in remote repository
-       -d : download jar from remote, and format likes group:artfact:version:classifer:extension
        -h : manpage
        jar format is group:artifact:version[:classifer:extension]
 ~~~
@@ -57,6 +56,3 @@ com.squareup.okio
 		1.8.0
 		1.9.0
 ~~~
-
-### 3. download the specific archive be dependent on
-**cmd:** ded -d com.squareup.okio:okio:0.5.0
