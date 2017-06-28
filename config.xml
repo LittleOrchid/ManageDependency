@@ -2,11 +2,13 @@
 <repo>
     <local>
         <url repo="maven">/Users/RexNJC/.m2/repository</url>
+        <url repo="maven">/Applications/Android Studio 3.0 Preview.app/Contents/gradle/m2repository</url>
         <url repo="gradle">/Users/RexNJC/.gradle/caches/modules-2/files-2.1</url>
     </local>
 
     <remote>
         <url repo="jcenter">http://jcenter.bintray.com</url>
+        <url repo="maven">http://repo.alibaba-inc.com/nexus/content/groups/public/</url>
         <url repo="maven">https://repo.maven.apache.org/maven2/</url>
         <url repo="maven">http://mvn.test.alipay.net/artifactory/content/groups/alipay-mobile/</url>
     </remote>
