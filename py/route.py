@@ -14,12 +14,12 @@ def parse_repo_config(pro_path_param):
     remote_jcenter_url_func = []
     remote_maven_url_func = []
     if not os.path.exists(pro_path_param + '/config.xml'):
-        print "---> The config file is missing!"
+        print ("---> The config file is missing!")
         exit(1)
     doc = minidom.parse(pro_path_param + "/config.xml")
     root = doc.documentElement
     if root.nodeName != 'repo':
-        print "---> The root of the config file must be 'repo'"
+        print ("---> The root of the config file must be 'repo'")
         exit(1)
     # parse local configs
     local_repos = root.getElementsByTagName("local")
@@ -31,7 +31,7 @@ def parse_repo_config(pro_path_param):
                 if local_sub_repo.nodeName == 'url':
                     if not local_sub_repo.childNodes \
                             or len(local_sub_repo.childNodes) <= 0:
-                        print "You should set the value in the tag 'url'"
+                        print ("You should set the value in the tag 'url'")
                         exit(1)
                     else:
                         if local_sub_repo.getAttribute('repo') == 'gradle':
@@ -48,7 +48,7 @@ def parse_repo_config(pro_path_param):
                 if remote_sub_repo.nodeName == 'url':
                     if not remote_sub_repo.childNodes \
                             or len(remote_sub_repo.childNodes) <= 0:
-                        print "You should set the value in the tag 'url'"
+                        print ("You should set the value in the tag 'url'")
                         exit(1)
                     else:
                         if remote_sub_repo.getAttribute('repo') == 'jcenter':
@@ -64,32 +64,32 @@ def parse_repo_config(pro_path_param):
 # 显示所有的缓存的jar信息
 def show_local_jars(local_maven_repo_func, local_gradle_repo_func, jar_name):
     if not local_maven_repo_func or not local_gradle_repo_func or len(local_maven_repo_func) <= 0 or len(local_gradle_repo_func) <= 0:
-        print '    Cannot find ' + jar_name + 'in local repository'
-    print "\n===> All Results In Local Maven Repositories Are Listed Below"
+        print ('    Cannot find ' + jar_name + ' in local repository')
+    print ("\n===> All Results In Local Maven Repositories Are Listed Below")
     for maven_repo_func in local_maven_repo_func:
-        print "---> List all result in " + maven_repo_func
+        print ("---> List all result in " + maven_repo_func)
         list_local_jars(maven_repo_func, jar_name, "maven")
-    print "\n===> All Results In Local Gradle Repositories Are Listed Below"
+    print ("\n===> All Results In Local Gradle Repositories Are Listed Below")
     for gradle_repo_func in local_gradle_repo_func:
-        print "---> List all result in " + gradle_repo_func
+        print ("---> List all result in " + gradle_repo_func)
         list_local_jars(gradle_repo_func, jar_name, "gradle")
 
 
 def show_remote_jars(jcenter_repo_urls, maven_repo_urls, jar_name_param):
-    print "\n===> All Results In Remote Repositories Are Listed Below"
+    print ("\n===> All Results In Remote Repositories Are Listed Below")
     if jcenter_repo_urls:
         for jcenter_url in jcenter_repo_urls:
-            print "--> List all result in " + jcenter_url
+            print ("--> List all result in " + jcenter_url)
             get_jcenter_versions(jcenter_url, jar_name_param)
     if maven_repo_urls:
         for maven_url in maven_repo_urls:
-            print "--> List all result in " + maven_url
+            print ("--> List all result in " + maven_url)
             get_maven_versions(maven_url, jar_name_param)
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print "----> There is a serious error in the script!"
+        print ("----> There is a serious error in the script!")
         exit(1)
     pro_path = sys.argv[1]
     action = sys.argv[2]
