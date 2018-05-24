@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import commands
-from BeautifulSoup import BeautifulSoup
+import subprocess
+from bs4 import BeautifulSoup
 
 coordinates = []
 group_path = ''
@@ -15,7 +15,7 @@ support_extensions = ['so', 'jar']
 
 def parse_all_versions():
     curl_url = 'curl ' + repo_base_url + group_path + '/' + artifact_dir + '/'
-    status, result = commands.getstatusoutput(curl_url)
+    status, result = subprocess.getstatusoutput(curl_url)
     soup = BeautifulSoup(result)
     version_href_array = soup.findAll('a')
     if not version_href_array:
@@ -36,7 +36,7 @@ def parse_all_versions():
 
 def parse_specific_version():
     curl_url = 'curl ' + repo_base_url + group_path + '/' + artifact_dir + '/' + version_dir + '/'
-    status, result = commands.getstatusoutput(curl_url)
+    status, result = subprocess.getstatusoutput(curl_url)
     soup = BeautifulSoup(result)
     file_a_list = soup.findAll('a')
     if not file_a_list:
@@ -103,7 +103,7 @@ def get_jcenter_versions(repo_url, jar_name):
     global repo_base_url
     repo_base_url = repo_url
     if not repo_base_url.endswith('/'):
-        repo_base_url += '/';
+        repo_base_url += '/'
     if not parse_jar_coordinate_jcenter(jar_name):
         return None
     if version_dir == '*':

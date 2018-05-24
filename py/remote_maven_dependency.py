@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import commands
-from BeautifulSoup import BeautifulSoup
+import subprocess
+from bs4 import BeautifulSoup
 
 coordinates = []
 group_path = ''
@@ -15,7 +15,7 @@ support_extensions = ['so', 'jar']
 
 def parse_all_versions():
     curl_url = 'curl ' + repo_base_url + group_path + '/' + artifact_dir + '/'
-    status, result = commands.getstatusoutput(curl_url)
+    status, result = subprocess.getstatusoutput(curl_url)
     soup = BeautifulSoup(result)
     version_href_array = soup.findAll('a')
     if not version_href_array:
@@ -28,15 +28,15 @@ def parse_all_versions():
             if attr and len(attr) >= 2 and attr[0] == 'href' and attr[1].endswith('/'):
                 version_list.append(attr[1].split('/')[-2])
     if version_list:
-        print coordinates[0]
-        print '\t', coordinates[1]
+        print(coordinates[0])
+        print('\t' + coordinates[1])
         for version in version_list:
-            print '\t\t', version.replace('/', '')
+            print('\t\t' + version.replace('/', ''))
 
 
 def parse_specific_version():
     curl_url = 'curl ' + repo_base_url + group_path + '/' + artifact_dir + '/' + version_dir + '/'
-    status, result = commands.getstatusoutput(curl_url)
+    status, result = subprocess.getstatusoutput(curl_url)
     soup = BeautifulSoup(result)
     file_a_list = soup.findAll('a')
     if not file_a_list:
@@ -58,11 +58,11 @@ def parse_specific_version():
                             find_extension = True
                             break
     if find_extension:
-        print coordinates[0], ':'
-        print '\t', coordinates[1], ':'
-        print '\t\t', version_dir.replace('/', ''), ':'
+        print(coordinates[0] + ':')
+        print('\t' + coordinates[1] + ':')
+        print('\t\t' + version_dir.replace('/', '') + ':')
         for gav_file in gav_files:
-            print '\t\t\t', gav_file
+            print('\t\t\t' + gav_file)
 
 
 def parse_jar_coordinate_jcenter(jar_name):
