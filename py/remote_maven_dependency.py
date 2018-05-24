@@ -101,7 +101,7 @@ def get_maven_versions(repo_url, jar_name):
     global repo_base_url
     repo_base_url = repo_url
     if not repo_base_url.endswith('/'):
-        repo_base_url += '/';
+        repo_base_url += '/'
     if not parse_jar_coordinate_jcenter(jar_name):
         return None
     if version_dir == '*':

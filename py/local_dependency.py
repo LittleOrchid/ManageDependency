@@ -127,7 +127,7 @@ def list_local_jars(repo_base_parm, jar_coordinate, method):
     if not chk_ga_result or not chk_v_result:
         print ('    Cannot find ' + jar_coordinate + ' in local repository')
     else:
-        print '    ', coordinates[0] + ': '
-        print '    ', '    ', coordinates[1] + ': '
+        print ('    ' + coordinates[0] + ': ')
+        print ('        ', coordinates[1] + ': ')
         for version in chk_v_result:
-            print '    ', '    ', '    ', version
+            print ('            ' + version)
